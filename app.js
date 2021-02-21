@@ -15,9 +15,32 @@ const Register = {
       descricao: descricao.value,
       valor: valor.value,
     }
-    console.log(values)
+    
+   bd.gravar(values) 
+  
+    }
+  }
 
-  },
-}
+  class Bd {
+    constructor () {
+      let id = localStorage.getItem('id')
 
+      if(id === null) {
+        localStorage.setItem('id', 0)
+      }
+    }
+
+    getNextId() {
+      let nextId = localStorage.getItem('id')
+      return parseInt(nextId) + 1
+    }
+
+    gravar(d) {
+      let id = this.getNextId()
+      localStorage.setItem(id, JSON.stringify(d))
+      localStorage.setItem('id', id)
+    }
+  }
+
+let bd = new Bd()
 
