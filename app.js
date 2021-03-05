@@ -10,8 +10,11 @@ class Value {
 
   validateValues() {
     for(let i in this) {
-      console.log(i)
+      if (this[i] == null || this[i] == undefined || this[i] == '' ) {
+        return false
+      }
     }
+    return true
   }
 }
 
@@ -35,6 +38,23 @@ class Bd {
     localStorage.setItem(id, JSON.stringify(d))
     localStorage.setItem('id', id)
   }
+
+  listConsult() {
+    let arrayListValues = Array()
+    
+    let listValues = localStorage.getItem('id')
+    
+    for(let i = 1; i <= listValues; i++) {
+      let register = JSON.parse(localStorage.getItem(i))
+      
+      if (register === null) {
+        continue
+      }
+      arrayListValues.push(register)
+      
+    }
+      return arrayListValues
+  }
 }
 
 let bd = new Bd()
@@ -56,14 +76,75 @@ function registerValues() {
     descricao.value,
     valor.value
   )
-  
+  // -- Controle de validação dos dados -- //
     if(value.validateValues()) {
-      //bd.gravar(values)
-      //console.log('Dados válidos')
+      bd.gravar(value)
+      document.getElementById('startModais').innerHTML = `
+      <!-- Modal Small - Gravação com Sucesso -->
+      <div class="modal fade show" id="readyRecord" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header text-success">
+            <h5 class="modal-title " id="exampleModalLabel">Sucesso na gravação!</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Os dados foram cadastrados com sucesso!
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-dismiss="modal" onclick="clearModal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Small - Gravação com Sucesso -->`
+      $('#readyRecord').modal('show');
     } else {
-      //console.log('Dados inválidos')
+      document.getElementById('startModais').innerHTML = `
+      <!-- Modal Small - Erro de gravação -->
+      <div class="modal fade show" id="failRecord" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title text-danger" id="exampleModalLabel">Erro de gravação!</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Por favor, preencha todos os dados para correta gravação!
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="clearModal()">Fechar e Corrigir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Small - Erro de gravação -->`
+    $('#failRecord').modal('show')
     }
 }
-    
 
+function clearModal() {
+  document.getElementById('startModais').innerHTML = ""
+}
 
+function addListConsult() {
+  let arrayListValues = Array() 
+  arrayListValues = bd.listConsult()
+  
+  let indiceArray = arrayListValues.length
+  let x = 0
+  while(x <= indiceArray) {    
+    document.getElementById("listValues").innerHTML =
+    ` <tr>
+      <td>${arrayListValues[2].dia}</td>
+      <td>${arrayListValues.tipo}</td>
+      <td>${arrayListValues.descricao}</td>
+      <td>${arrayListValues.valor}</td>
+      </tr>
+    `
+    x++
+  }}
