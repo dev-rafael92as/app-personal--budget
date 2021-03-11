@@ -55,6 +55,41 @@ class Bd {
     }
       return arrayListValues
   }
+  search(expense) {
+    console.log(expense)
+    let filterSearch = Array()
+    
+    filterSearch = this.listConsult()
+    console.log(filterSearch)
+    console.log(expense)
+    //ano
+    if (expense.ano != '') {
+    filterSearch = filterSearch.filter(e => e.ano == expense.ano)
+    }
+    
+    //mes
+    if (expense.mes != '') {
+    filterSearch = filterSearch.filter(e => e.mes == expense.mes)
+    }
+    //dia
+    if (expense.dia != '') {
+    filterSearch = filterSearch.filter(e => e.dia == expense.dia)
+    }
+    //tipo
+    if (expense.tipo != '') {
+    filterSearch = filterSearch.filter(e => e.tipo == expense.tipo)
+    }
+    //descrição
+    if (expense.descricao != '') {
+    filterSearch = filterSearch.filter(e => e.descricao == expense.descricao)
+    }
+    //valor
+    if (expense.valor != '') {
+    filterSearch = filterSearch.filter(e => e.valor == expense.valor)
+    }
+    console.log(filterSearch)
+    showListSearch(filterSearch)
+  }
 }
 
 let bd = new Bd()
@@ -76,6 +111,7 @@ function registerValues() {
     descricao.value,
     valor.value
   )
+  
   // -- Controle de validação dos dados -- //
     if(value.validateValues()) {
       bd.gravar(value)
@@ -129,22 +165,89 @@ function registerValues() {
 
 function clearModal() {
   document.getElementById('startModais').innerHTML = ""
+  document.getElementById('ano').value = "" 
+  document.getElementById('mes').value = ""
+  document.getElementById('dia').value = "" 
+  document.getElementById('tipo').value = ""
+  document.getElementById('descricao').value = "" 
+  document.getElementById('valor').value = ""
 }
 
 function addListConsult() {
   let arrayListValues = Array() 
   arrayListValues = bd.listConsult()
   
-  let indiceArray = arrayListValues.length
-  let x = 0
-  while(x <= indiceArray) {    
-    document.getElementById("listValues").innerHTML =
-    ` <tr>
-      <td>${arrayListValues[2].dia}</td>
-      <td>${arrayListValues.tipo}</td>
-      <td>${arrayListValues.descricao}</td>
-      <td>${arrayListValues.valor}</td>
-      </tr>
-    `
-    x++
-  }}
+  // Selecionando o elemento tbody da tabela
+  let listValues = document.getElementById('listValues')
+
+  //percorrer o array arryListValues, listando cada despesa 
+  arrayListValues.forEach(function(d) {
+      //criando linha (tr)
+      let line = listValues.insertRow()
+
+      //criando as colunas (td)
+      line.insertCell(0).innerHTML = `${d.dia}/${d.mes}/${d.ano}`
+
+      //ajustar o tipo
+      switch(d.tipo) {
+        case '1': d.tipo = 'Alimentação'
+          break
+        case '2': d.tipo = 'Educação'
+          break
+        case '3': d.tipo = 'Lazer'
+          break
+        case '4': d.tipo = 'Saúde'
+          break
+        case '5': d.tipo = 'Transporte'
+          break
+      }
+      line.insertCell(1).innerHTML = d.tipo
+      line.insertCell(2).innerHTML = d.descricao
+      
+      line.insertCell(3).innerHTML = `R$${d.valor},00`  
+      }) 
+  }
+
+
+function showListSearch(filterSearch) { 
+  
+  document.getElementById('listValues').innerHTML = ""
+
+  let newListValues = document.getElementById('listValues')
+
+  filterSearch.forEach(function(d) {
+    let line = newListValues.insertRow()
+
+    line.insertCell(0).innerHTML = `${d.dia}/${d.mes}/${d.ano}`
+    //ajustar o tipo
+    switch(d.tipo) {
+      case '1': d.tipo = 'Alimentação'
+        break
+      case '2': d.tipo = 'Educação'
+        break
+      case '3': d.tipo = 'Lazer'
+        break
+      case '4': d.tipo = 'Saúde'
+        break
+      case '5': d.tipo = 'Transporte'
+        break
+    }
+    line.insertCell(1).innerHTML = d.tipo
+    line.insertCell(2).innerHTML = d.descricao
+    line.insertCell(3).innerHTML = `R$${d.valor},00`
+  })
+}
+
+function searchExpense() {
+  let ano = document.getElementById('ano').value
+  let mes = document.getElementById('mes').value
+  let dia = document.getElementById('dia').value
+  let tipo = document.getElementById('tipo').value
+  let descricao = document.getElementById('descricao').value
+  let valor = document.getElementById('valor').value
+
+  let expense = new Value(ano, mes, dia, tipo, descricao, valor)
+  
+  bd.search(expense)
+}
+  
