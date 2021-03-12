@@ -50,6 +50,7 @@ class Bd {
       if (register === null) {
         continue
       }
+      register.id = i
       arrayListValues.push(register)
       
     }
@@ -89,6 +90,9 @@ class Bd {
     }
     console.log(filterSearch)
     showListSearch(filterSearch)
+  }
+  remover(id) {
+    localStorage.removeItem(id)
   }
 }
 
@@ -185,8 +189,12 @@ function addListConsult() {
       //criando linha (tr)
       let line = listValues.insertRow()
 
+      //formatação de dia e mês para exibição
+      let formatMonth = ("00" + d.mes).slice(-2)
+      let formatDay = ("00" + d.dia).slice(-2)
+
       //criando as colunas (td)
-      line.insertCell(0).innerHTML = `${d.dia}/${d.mes}/${d.ano}`
+      line.insertCell(0).innerHTML = `${formatDay}/${formatMonth}/${d.ano}`
 
       //ajustar o tipo
       switch(d.tipo) {
@@ -205,7 +213,20 @@ function addListConsult() {
       line.insertCell(2).innerHTML = d.descricao
       
       line.insertCell(3).innerHTML = `R$${d.valor},00`  
-      }) 
+      
+      //criar o botão de exclusão
+      let btn = document.createElement("button")
+      btn.className = 'btn btn-danger'
+      btn.innerHTML = '<i class="fas fa-times"></i>'
+      btn.id = `id_despesa_${d.id}`
+      btn.onclick = function() {
+        let id = this.id.replace('id_despesa_', '')
+        
+        bd.remover(id)
+        window.location.reload()
+      }
+      line.insertCell(4).append(btn)
+    }) 
   }
 
 
@@ -218,7 +239,11 @@ function showListSearch(filterSearch) {
   filterSearch.forEach(function(d) {
     let line = newListValues.insertRow()
 
-    line.insertCell(0).innerHTML = `${d.dia}/${d.mes}/${d.ano}`
+    //formatação de dia e mês para exibição
+    let formatMonth = ("00" + d.mes).slice(-2)
+    let formatDay = ("00" + d.dia).slice(-2)
+
+    line.insertCell(0).innerHTML = `${formatDay}/${formatMonth}/${d.ano}`
     //ajustar o tipo
     switch(d.tipo) {
       case '1': d.tipo = 'Alimentação'
